@@ -6,9 +6,6 @@
 # - build a core-image-sato image
 # - then bitbake core-image-sato -c netboot. That will run the uploading steps.
 #
-# Uploading NETBOOT aritfacts can be run automatically each time an image is built if you set
-# NETBOOT_AUTO = "1"
-#
 # NETBOOT_LOCATION:
 #   local: NETBOOT mount on this machine
 #   remote: NETBOOT exported from a remote system not mounted on this system
@@ -22,8 +19,6 @@
 # NETBOOT_DEST_DIR -  Name of where new builds are copied too.
 #
 # SSHPASS - where to find the sshpass binary, defaults to the systme one
-
-NETBOOT_AUTO ??= "0"
 
 NETBOOT ?= ""
 NETBOOT_DIR ?= "${TOPDIR}/tftpboot/"
@@ -39,8 +34,6 @@ NETBOOT_PSWDFILE ?= "${EXAMPLE_NETBOOT_DIR}.netboot"
 NETBOOT_DEST ?= "${IMAGE_NAME}"
 NEYBOOT_MACHINE_NAME ?= "${MACHINE}"
 SSHPASS ?= "/usr/bin/sshpass"
-
-do_netboot[depends] += "virtual/kernel:do_deploy virtual/bootloader:do_deploy"
 
 generate_local_tftpd () {
     if [ ! -d ${NETBOOT_DIR} ]; then
@@ -119,7 +112,7 @@ python do_netboot() {
         bb.warn("Invalid NETBOOT parameter")
 }
 
-python () {
-    if oe.types.boolean(d.getVar("NETBOOT_AUTO") or "False"):
-        bb.build.addtask("netboot", "do_build", "do_image_complete", d)
-}
+#addtask netboot
+do_netboot[depends] += "virtual/kernel:do_deploy virtual/bootloader:do_deploy"
+
+addtask netboot before do_build after do_image_complete

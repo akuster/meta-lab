@@ -2,6 +2,13 @@
 
 This is for small or home style labs.
 
+
+Add to your local.conf
+
+INHERIT += "remote-lab"
+include conf/lab.conf
+
+
 Maintenance
 -----------
 
